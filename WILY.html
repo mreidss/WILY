@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Mitch Loves Lauren More</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: #ffe6e6; /* Light pink background */
+    }
+    h1 {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #c73333; /* Dark red title */
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    #quote-container {
+      text-align: center;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #signature {
+      font-style: italic;
+      margin-top: 10px;
+      text-align: right;
+    }
+    #refresh-btn {
+      background-color: #c73333; /* Dark red button */
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-bottom: 20px;
+      margin-top:20px;
+    }
+    #refresh-btn:hover {
+      background-color: #a62929; /* Dark red button on hover */
+    }
+    .heart {
+      color: #c73333; /* Dark red heart */
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="heart">❤️</div>
+<h1>Why Mitch Loves Lauren</h1>
+<div id="quote-container">
+  <p id="quote-text"></p>
+  <p id="signature"></p>
+</div>
+<button id="refresh-btn">Refresh</button>
+<div class="heart">❤️</div>
+
+<!-- Hidden HTML elements for storing quotes -->
+<div id="hidden-quotes" style="display: none;">
+  <p>"Lauren always listens to Mitch's stories."</p>
+  <p>"Lauren cooks Mitch's favorite meals."</p>
+  <p>"Lauren supports Mitch in everything he does."</p>
+  <p>"Lauren has a great sense of humor."</p>
+  <p>"Lauren makes Mitch feel loved every day."</p>
+  <p>"Lauren is always there for Mitch when he needs her."</p>
+  <p>"Lauren encourages Mitch to be his best self."</p>
+  <p>"Lauren surprises Mitch with thoughtful gestures."</p>
+  <p>"Lauren and Mitch share amazing adventures together."</p>
+  <p>"Lauren's smile brightens Mitch's day."</p>
+</div>
+
+<script>
+  const quoteContainer = document.getElementById('quote-text');
+  const signature = document.getElementById('signature');
+  const refreshBtn = document.getElementById('refresh-btn');
+  const hiddenQuotes = document.getElementById('hidden-quotes');
+
+  let currentQuoteIndex = 0;
+  const quotes = hiddenQuotes.querySelectorAll('p');
+
+  // Function to display a random quote
+  function displayRandomQuote() {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const randomQuote = quotes[randomIndex].textContent;
+    quoteContainer.textContent = randomQuote;
+    signature.textContent = "- Mitch";
+  }
+
+  // Display initial quote
+  displayRandomQuote();
+
+  // Event listener for refresh button
+  refreshBtn.addEventListener('click', displayRandomQuote);
+</script>
+
+</body>
+</html>
