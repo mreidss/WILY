@@ -8,31 +8,41 @@
     body, html {
       height: 100%;
       margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
       background-color: #ffe6e6; /* Light pink background */
+    }
+    .container {
+      display: flex;
+      justify-content: space-around;
+      align-items: stretch;
+      height: 100%;
+      padding: 0 20px;
+    }
+    .column {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left:20px;
+      margin-right:20px;
     }
     h1 {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #c73333; /* Dark red title */
-      text-align: center;
       margin-bottom: 20px;
     }
-    #quote-container {
-      text-align: center;
+    .quote-container {
       padding: 20px;
       background-color: #fff;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-    #signature {
+    .signature {
       font-style: italic;
       margin-top: 10px;
       text-align: right;
     }
-    #refresh-btn {
+    .refresh-btn {
       background-color: #c73333; /* Dark red button */
       color: #fff;
       border: none;
@@ -41,10 +51,9 @@
       border-radius: 5px;
       cursor: pointer;
       transition: background-color 0.3s;
-      margin-bottom: 20px;
-      margin-top:20px;
+      margin-top: 20px;
     }
-    #refresh-btn:hover {
+    .refresh-btn:hover {
       background-color: #a62929; /* Dark red button on hover */
     }
     .heart {
@@ -52,55 +61,94 @@
       font-size: 24px;
       margin-bottom: 10px;
     }
+    .separator {
+      border-left: 2px solid #c73333; /* Dark red line */
+      height: 100%;
+    }
   </style>
 </head>
 <body>
 
-<div class="heart">❤️</div>
-<h1>Why Mitch Loves Lauren</h1>
-<div id="quote-container">
-  <p id="quote-text"></p>
-  <p id="signature"></p>
+<div class="container">
+  <div class="column">
+    <div class="heart">❤️</div>
+    <h1>Why Lauren Loves Mitch</h1>
+    <div class="quote-container" id="quote-container1">
+      <p class="quote-text"></p>
+      <p class="signature"></p>
+    </div>
+    <button class="refresh-btn" id="refresh-btn1">Refresh</button>
+  </div>
+  <div class="separator"></div>
+  <div class="column">
+    <div class="heart">❤️</div>
+    <h1>Why Mitch Loves Lauren</h1>
+    <div class="quote-container" id="quote-container2">
+      <p class="quote-text"></p>
+      <p class="signature"></p>
+    </div>
+    <button class="refresh-btn" id="refresh-btn2">Refresh</button>
+  </div>
 </div>
-<button id="refresh-btn">Refresh</button>
-<div class="heart">❤️</div>
 
 <!-- Hidden HTML elements for storing quotes -->
-<div id="hidden-quotes" style="display: none;">
-  <p>"Lauren always listens to Mitch's stories."</p>
-  <p>"Lauren cooks Mitch's favorite meals."</p>
-  <p>"Lauren supports Mitch in everything he does."</p>
-  <p>"Lauren has a great sense of humor."</p>
-  <p>"Lauren makes Mitch feel loved every day."</p>
-  <p>"Lauren is always there for Mitch when he needs her."</p>
-  <p>"Lauren encourages Mitch to be his best self."</p>
-  <p>"Lauren surprises Mitch with thoughtful gestures."</p>
-  <p>"Lauren and Mitch share amazing adventures together."</p>
-  <p>"Lauren's smile brightens Mitch's day."</p>
+<div class="hidden-quotes" style="display: none;">
+  <div id="hidden-quotes1">
+    <p>"Lauren always listens to Mitch's stories."</p>
+    <p>"Lauren cooks Mitch's favorite meals."</p>
+    <p>"Lauren supports Mitch in everything he does."</p>
+    <p>"Lauren has a great sense of humor."</p>
+    <p>"Lauren makes Mitch feel loved every day."</p>
+  </div>
+  <div id="hidden-quotes2">
+    <p>"Mitch smells funny."</p>
+  </div>
 </div>
 
 <script>
-  const quoteContainer = document.getElementById('quote-text');
-  const signature = document.getElementById('signature');
-  const refreshBtn = document.getElementById('refresh-btn');
-  const hiddenQuotes = document.getElementById('hidden-quotes');
+  const quoteContainers = document.querySelectorAll('.quote-text');
+  const signatures = document.querySelectorAll('.signature');
+  const refreshBtns = document.querySelectorAll('.refresh-btn');
+  const hiddenQuotes1 = document.getElementById('hidden-quotes1');
+  const hiddenQuotes2 = document.getElementById('hidden-quotes2');
 
-  let currentQuoteIndex = 0;
-  const quotes = hiddenQuotes.querySelectorAll('p');
+  let currentQuoteIndex1 = 0;
+  let currentQuoteIndex2 = 0;
+  const quotes1 = hiddenQuotes1.querySelectorAll('p');
+  const quotes2 = hiddenQuotes2.querySelectorAll('p');
 
   // Function to display a random quote
-  function displayRandomQuote() {
+  function displayRandomQuote(index, container, quotes) {
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const randomQuote = quotes[randomIndex].textContent;
-    quoteContainer.textContent = randomQuote;
-    signature.textContent = "- Mitch";
+    container.textContent = randomQuote;
+
+    if(quotes == quotes1)
+    {
+      signatures[index].textContent = "- Lauren";
+    }
+    else
+    {
+      signatures[index].textContent = "- Mitch";
+    }
   }
 
-  // Display initial quote
-  displayRandomQuote();
+  // Display initial quotes
+  displayRandomQuote(0, quoteContainers[0], quotes1);
+  displayRandomQuote(1, quoteContainers[1], quotes2);
 
-  // Event listener for refresh button
-  refreshBtn.addEventListener('click', displayRandomQuote);
+  // Event listener for refresh buttons
+  refreshBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      if (index === 0) {
+        currentQuoteIndex1 = (currentQuoteIndex1 + 1) % quotes1.length;
+        displayRandomQuote(0, quoteContainers[0], quotes1);
+      } else {
+        currentQuoteIndex2 = (currentQuoteIndex2 + 1) % quotes2.length;
+        displayRandomQuote(1, quoteContainers[1], quotes2);
+      }
+    });
+  });
 </script>
 
 </body>
