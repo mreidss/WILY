@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Why Mitch Loves Lauren More</title>
+
+  <link rel="icon" href="heart.png" type="image/png">
+  <title>WILY - Why I Love You</title>
   <style>
     body, html {
       height: 100%;
       margin: 0;
       background-color: #ffe6e6; /* Light pink background */
     }
-    .container {
+    .Outer_container {
       display: flex;
       justify-content: space-around;
       align-items: stretch;
       height: 100%;
       padding: 0 20px;
     }
-    .column {
+    .WILY_column {
       flex: 1;
       text-align: center;
       display: flex;
@@ -26,11 +28,13 @@
       margin-left:20px;
       margin-right:20px;
     }
+
     h1 {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #c73333; /* Dark red title */
-      margin-bottom: 20px;
+      margin-bottom: 0px;
     }
+
     .quote-container {
       padding: 20px;
       background-color: #fff;
@@ -42,6 +46,19 @@
       margin-top: 10px;
       text-align: right;
     }
+
+    .add-quote-btn {
+      background-color: #c73333; /* Dark red button */
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 0px;
+    }
+
     .refresh-btn {
       background-color: #c73333; /* Dark red button */
       color: #fff;
@@ -53,7 +70,7 @@
       transition: background-color 0.3s;
       margin-top: 20px;
     }
-    .refresh-btn:hover {
+    .refresh-btn:hover, add-quote-btn:hover {
       background-color: #a62929; /* Dark red button on hover */
     }
     .heart {
@@ -84,31 +101,33 @@
 </head>
 <body>
 
-<div class="container">
-  <div class="column">
+<div class="Outer_container">
+  <div class="WILY_column">
     <div class="heart">❤️</div>
     <h1>Why Lauren Loves Mitch</h1>
+    <p id="numReasonsLauren"></p>
     <div class="quote-container" id="quote-container1">
       <p class="quote-text" id="lauren-quote"></p>
-      <p class="signature">- Lauren</p>
+      <p id="lauren-signature" class="signature"></p>
     </div>
     <button class="refresh-btn" id="refresh-btn1">Refresh</button>
     <div class="input-container">
-      <input type="text" id="lauren-input" placeholder="Enter Lauren's quote">
+      <input type="text" id="lauren-input" placeholder="Enter new quote">
       <button class="add-quote-btn" id="add-quote-btn1">Add Quote</button>
     </div>
   </div>
   <div class="separator"></div>
-  <div class="column">
+  <div class="WILY_column">
     <div class="heart">❤️</div>
     <h1>Why Mitch Loves Lauren</h1>
+    <p id="numReasonsMitch"></p>
     <div class="quote-container" id="quote-container2">
       <p class="quote-text" id="mitch-quote"></p>
-      <p class="signature">- Mitch</p>
+      <p id="mitch-signature" class="signature"></p>
     </div>
     <button class="refresh-btn" id="refresh-btn2">Refresh</button>
     <div class="input-container">
-      <input type="text" id="mitch-input" placeholder="Enter Mitch's quote">
+      <input type="text" id="mitch-input" placeholder="Enter new quote">
       <button class="add-quote-btn" id="add-quote-btn2">Add Quote</button>
     </div>
   </div>
@@ -117,6 +136,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.min.js" integrity="sha512-WHVh4oxWZQOEVkGECWGFO41WavMMW5vNCi55lyuzDBID+dHg2PIxVufsguM7nfTYN3CEeQ/6NB46FWemzpoI6Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.10.5/sweetalert2.css" integrity="sha512-n1PBkhxQLVIma0hnm731gu/40gByOeBjlm5Z/PgwNxhJnyW1wYG8v7gPJDT6jpk0cMHfL8vUGUVjz3t4gXyZYQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script type="module">
 
   // Your web app's Firebase configuration
@@ -155,7 +176,12 @@
     if (doc.exists) {
       const laurenQuote = doc.data().QuoteText;
       console.log("Lauren Quote: " + laurenQuote);
+      
+      const laurenSignature = "- Lauren";
+      const laurenTime = doc.data().TimeOfQuote.toDate(); // Assuming TimeOfQuote is a Firestore Timestamp
+      const laurenTimeFormatted = laurenTime.toLocaleString('en-AU', {year: 'numeric', month: '2-digit', day: '2-digit'}); // Format the timestamp as a string
       document.getElementById("lauren-quote").innerText = "\"" + laurenQuote + "\"";
+      document.getElementById("lauren-signature").innerText = laurenSignature + " " + laurenTimeFormatted;
     } else {
       console.log("No such document!");
     }
@@ -169,12 +195,34 @@
     if (doc.exists) {
       const mitchQuote = doc.data().QuoteText;
       console.log("Mitch Quote: " + mitchQuote);
+      
+      const mitchSignature = "- Mitch";
+      const mitchTime = doc.data().TimeOfQuote.toDate(); // Assuming TimeOfQuote is a Firestore Timestamp
+      const mitchTimeFormatted = mitchTime.toLocaleString('en-AU', {year: 'numeric', month: '2-digit', day: '2-digit'}); // Format the timestamp as a string
       document.getElementById("mitch-quote").innerText = "\"" + mitchQuote + "\"";
+      document.getElementById("mitch-signature").innerText = mitchSignature + " " + mitchTimeFormatted;
     } else {
       console.log("No such document!");
     }
   }).catch((error) => {
     console.log("Error getting document:", error);
+  });
+
+  // Function to get the count of documents in a collection
+  function getDocumentCount(collection) {
+      return collection.get().then((querySnapshot) => {
+          return querySnapshot.size;
+      });
+  }
+
+  // Get the count of documents for Lauren's quotes
+  getDocumentCount(laurenQuotesRef).then((count) => {
+      document.getElementById("numReasonsLauren").innerText = "Reasons: " + count;
+  });
+
+  // Get the count of documents for Mitch's quotes
+  getDocumentCount(mitchQuotesRef).then((count) => {
+      document.getElementById("numReasonsMitch").innerText = "Reasons: " + count;
   });
 
   // Add event listeners to the buttons
@@ -214,9 +262,32 @@
       laurenQuotesRef.add({ QuoteText: laurenInput, TimeOfQuote: currentTime  })
         .then(() => {
           console.log("Lauren's quote added successfully!");
+
+          getDocumentCount(laurenQuotesRef).then((count) => {
+            document.getElementById("numReasonsLauren").innerText = "Reasons: " + count;
+          });
+
+          Swal.fire({
+            position: "center-start",
+            icon: "success",
+            title: "Added a new quote from Lauren successfully!",
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          // -- clear input
+          document.getElementById("lauren-input").value = "";
         })
         .catch((error) => {
           console.error("Error adding document: ", error);
+
+          Swal.fire({
+            position: "center-start",
+            icon: "error",
+            title: "Failed to load new quote!",
+            showConfirmButton: false,
+            timer: 1500
+          });
         });
     }
   });
@@ -229,9 +300,32 @@
       mitchQuotesRef.add({ QuoteText: mitchInput, TimeOfQuote: currentTime })
         .then(() => {
           console.log("Mitch's quote added successfully!");
+
+          getDocumentCount(mitchQuotesRef).then((count) => {
+            document.getElementById("numReasonsMitch").innerText = "Reasons: " + count;
+          });
+
+          Swal.fire({
+            position: "center-end",
+            icon: "success",
+            title: "Added a new quote from Mitch successfully!",
+            showConfirmButton: false,
+            timer: 1500
+          });
+
+          // -- clear input
+          document.getElementById("mitch-input").value = "";
         })
         .catch((error) => {
           console.error("Error adding document: ", error);
+
+          Swal.fire({
+            position: "center-start",
+            icon: "error",
+            title: "Failed to load new quote!",
+            showConfirmButton: false,
+            timer: 1500
+          });
         });
     }
   });
