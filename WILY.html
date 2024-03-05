@@ -69,6 +69,17 @@
     .quote-text {
       font-style:italic;
     }
+    
+    .input-container {
+      margin-top: 20px;
+    }
+
+    .input-container input {
+      margin-bottom: 10px;
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
   </style>
 </head>
 <body>
@@ -82,6 +93,10 @@
       <p class="signature">- Lauren</p>
     </div>
     <button class="refresh-btn" id="refresh-btn1">Refresh</button>
+    <div class="input-container">
+      <input type="text" id="lauren-input" placeholder="Enter Lauren's quote">
+      <button class="add-quote-btn" id="add-quote-btn1">Add Quote</button>
+    </div>
   </div>
   <div class="separator"></div>
   <div class="column">
@@ -92,9 +107,12 @@
       <p class="signature">- Mitch</p>
     </div>
     <button class="refresh-btn" id="refresh-btn2">Refresh</button>
+    <div class="input-container">
+      <input type="text" id="mitch-input" placeholder="Enter Mitch's quote">
+      <button class="add-quote-btn" id="add-quote-btn2">Add Quote</button>
+    </div>
   </div>
 </div>
-
 
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -112,6 +130,7 @@
     appId: "1:604348859673:web:64bd57e45a5cb87dac7188",
     measurementId: "G-6DCDKXEHMF"
   };
+
 
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
@@ -156,6 +175,65 @@
     }
   }).catch((error) => {
     console.log("Error getting document:", error);
+  });
+
+  // Add event listeners to the buttons
+  document.getElementById("refresh-btn1").addEventListener("click", function() {
+    getRandomDocument(laurenQuotesRef).then((doc) => {
+      if (doc.exists) {
+        const laurenQuote = doc.data().QuoteText;
+        console.log("Lauren Quote: " + laurenQuote);
+        document.getElementById("lauren-quote").innerText = "\"" + laurenQuote + "\"";
+      } else {
+        console.log("No such document!");
+      }
+    }).catch((error) => {
+      console.log("Error getting document:", error);
+    });
+  });
+
+  document.getElementById("refresh-btn2").addEventListener("click", function() {
+    getRandomDocument(mitchQuotesRef).then((doc) => {
+      if (doc.exists) {
+        const mitchQuote = doc.data().QuoteText;
+        console.log("Mitch Quote: " + mitchQuote);
+        document.getElementById("mitch-quote").innerText = "\"" + mitchQuote + "\"";
+      } else {
+        console.log("No such document!");
+      }
+    }).catch((error) => {
+      console.log("Error getting document:", error);
+    });
+  });
+
+  document.getElementById("add-quote-btn1").addEventListener("click", function() {
+    const laurenInput = document.getElementById("lauren-input").value;
+    if (laurenInput.trim() !== "") {
+      // Write Lauren's quote to Firestore
+      const currentTime = firebase.firestore.FieldValue.serverTimestamp();
+      laurenQuotesRef.add({ QuoteText: laurenInput, TimeOfQuote: currentTime  })
+        .then(() => {
+          console.log("Lauren's quote added successfully!");
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    }
+  });
+
+  document.getElementById("add-quote-btn2").addEventListener("click", function() {
+    const mitchInput = document.getElementById("mitch-input").value;
+    if (mitchInput.trim() !== "") {
+      // Write Mitch's quote to Firestore
+      const currentTime = firebase.firestore.FieldValue.serverTimestamp();
+      mitchQuotesRef.add({ QuoteText: mitchInput, TimeOfQuote: currentTime })
+        .then(() => {
+          console.log("Mitch's quote added successfully!");
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    }
   });
 
 </script>
