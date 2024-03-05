@@ -65,6 +65,10 @@
       border-left: 2px solid #c73333; /* Dark red line */
       height: 100%;
     }
+
+    .quote-text {
+      font-style:italic;
+    }
   </style>
 </head>
 <body>
@@ -74,8 +78,8 @@
     <div class="heart">❤️</div>
     <h1>Why Lauren Loves Mitch</h1>
     <div class="quote-container" id="quote-container1">
-      <p class="quote-text"></p>
-      <p class="signature"></p>
+      <p class="quote-text" id="lauren-quote"></p>
+      <p class="signature">- Lauren</p>
     </div>
     <button class="refresh-btn" id="refresh-btn1">Refresh</button>
   </div>
@@ -84,71 +88,76 @@
     <div class="heart">❤️</div>
     <h1>Why Mitch Loves Lauren</h1>
     <div class="quote-container" id="quote-container2">
-      <p class="quote-text"></p>
-      <p class="signature"></p>
+      <p class="quote-text" id="mitch-quote"></p>
+      <p class="signature">- Mitch</p>
     </div>
     <button class="refresh-btn" id="refresh-btn2">Refresh</button>
   </div>
 </div>
 
-<!-- Hidden HTML elements for storing quotes -->
-<div class="hidden-quotes" style="display: none;">
-  <div id="hidden-quotes1">
-    <p>"Lauren always listens to Mitch's stories."</p>
-    <p>"Lauren cooks Mitch's favorite meals."</p>
-    <p>"Lauren supports Mitch in everything he does."</p>
-    <p>"Lauren has a great sense of humor."</p>
-    <p>"Lauren makes Mitch feel loved every day."</p>
-  </div>
-  <div id="hidden-quotes2">
-    <p>"Mitch smells funny."</p>
-  </div>
-</div>
 
-<script>
-  const quoteContainers = document.querySelectorAll('.quote-text');
-  const signatures = document.querySelectorAll('.signature');
-  const refreshBtns = document.querySelectorAll('.refresh-btn');
-  const hiddenQuotes1 = document.getElementById('hidden-quotes1');
-  const hiddenQuotes2 = document.getElementById('hidden-quotes2');
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
-  let currentQuoteIndex1 = 0;
-  let currentQuoteIndex2 = 0;
-  const quotes1 = hiddenQuotes1.querySelectorAll('p');
-  const quotes2 = hiddenQuotes2.querySelectorAll('p');
+<script type="module">
 
-  // Function to display a random quote
-  function displayRandomQuote(index, container, quotes) {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const randomQuote = quotes[randomIndex].textContent;
-    container.textContent = randomQuote;
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpHgA48wsYLKhYld_7D0Zgplc3Bl1Ax7o",
+    authDomain: "wwle-dee34.firebaseapp.com",
+    projectId: "wwle-dee34",
+    storageBucket: "wwle-dee34.appspot.com",
+    messagingSenderId: "604348859673",
+    appId: "1:604348859673:web:64bd57e45a5cb87dac7188",
+    measurementId: "G-6DCDKXEHMF"
+  };
 
-    if(quotes == quotes1)
-    {
-      signatures[index].textContent = "- Lauren";
-    }
-    else
-    {
-      signatures[index].textContent = "- Mitch";
-    }
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  
+  const db = firebase.firestore();
+
+  // Function to retrieve a random document from a collection
+  function getRandomDocument(collection) {
+    return collection.get().then((querySnapshot) => {
+      const documents = [];
+      querySnapshot.forEach((doc) => {
+        documents.push(doc);
+      });
+      const randomIndex = Math.floor(Math.random() * documents.length);
+      return documents[randomIndex];
+    });
   }
 
-  // Display initial quotes
-  displayRandomQuote(0, quoteContainers[0], quotes1);
-  displayRandomQuote(1, quoteContainers[1], quotes2);
-
-  // Event listener for refresh buttons
-  refreshBtns.forEach((btn, index) => {
-    btn.addEventListener('click', () => {
-      if (index === 0) {
-        currentQuoteIndex1 = (currentQuoteIndex1 + 1) % quotes1.length;
-        displayRandomQuote(0, quoteContainers[0], quotes1);
-      } else {
-        currentQuoteIndex2 = (currentQuoteIndex2 + 1) % quotes2.length;
-        displayRandomQuote(1, quoteContainers[1], quotes2);
-      }
-    });
+  // Retrieve a random quote for Lauren
+  const laurenQuotesRef = db.collection("Lauren_Quotes");
+  getRandomDocument(laurenQuotesRef).then((doc) => {
+    if (doc.exists) {
+      const laurenQuote = doc.data().QuoteText;
+      console.log("Lauren Quote: " + laurenQuote);
+      document.getElementById("lauren-quote").innerText = "\"" + laurenQuote + "\"";
+    } else {
+      console.log("No such document!");
+    }
+  }).catch((error) => {
+    console.log("Error getting document:", error);
   });
+
+  // Retrieve a random quote for Mitch
+  const mitchQuotesRef = db.collection("Mitch_Quotes");
+  getRandomDocument(mitchQuotesRef).then((doc) => {
+    if (doc.exists) {
+      const mitchQuote = doc.data().QuoteText;
+      console.log("Mitch Quote: " + mitchQuote);
+      document.getElementById("mitch-quote").innerText = "\"" + mitchQuote + "\"";
+    } else {
+      console.log("No such document!");
+    }
+  }).catch((error) => {
+    console.log("Error getting document:", error);
+  });
+
 </script>
 
 </body>
